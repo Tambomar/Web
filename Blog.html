@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Blog - Recetas y Tips de Tambomar</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    function openModal(articleId) {
+      document.getElementById('modal-' + articleId).classList.remove('hidden');
+    }
+    function closeModal(articleId) {
+      document.getElementById('modal-' + articleId).classList.add('hidden');
+    }
+  </script>
+</head>
+<body class="bg-gray-50 text-gray-800 font-sans">
+
+  <!-- Header responsivo -->
+  <header class="bg-orange-500 text-white py-8 px-4 text-center flex flex-col md:flex-row items-center md:justify-center gap-4 md:gap-0 relative">
+    <div class="flex justify-center md:absolute md:left-4 md:top-1/2 md:-translate-y-1/2">
+      <a href="index.html">
+        <img src="logo.png" alt="Logo Tambomar" class="w-36 md:w-48">
+      </a>
+    </div>
+    <div>
+      <h1 class="text-3xl md:text-4xl font-bold mb-2">Blog Tambomar</h1>
+      <p class="text-base md:text-lg">Recetas, tips y novedades del mundo de las conservas</p>
+    </div>
+  </header>
+
+  <!-- Artículos -->
+  <main class="max-w-6xl mx-auto px-6 py-12 grid gap-10 md:grid-cols-2 lg:grid-cols-3">
+    <article class="bg-white shadow rounded overflow-hidden hover:shadow-md transition">
+      <img src="blog/ensaladaatun.png" alt="Ensalada con Atún" class="w-full h-48 object-cover rounded-t">
+      <div class="p-4">
+        <h2 class="text-xl font-bold mb-2">Ensalada fresca con atún en conserva</h2>
+        <p class="text-sm text-gray-600 mb-3">Una receta ideal para días calurosos, con mucho sabor y sin complicaciones.</p>
+        <button onclick="openModal('1')" class="text-blue-600 font-semibold hover:underline">Leer más</button>
+      </div>
+    </article>
+
+    <article class="bg-white shadow rounded overflow-hidden hover:shadow-md transition">
+      <img src="blog/caballatomate.png" alt="Caballa en tomate" class="w-full h-48 object-cover rounded-t">
+      <div class="p-4">
+        <h2 class="text-xl font-bold mb-2">Caballa en salsa de tomate: ¡una delicia casera!</h2>
+        <p class="text-sm text-gray-600 mb-3">Aprende a preparar este platillo sabroso en menos de 15 minutos.</p>
+        <button onclick="openModal('2')" class="text-blue-600 font-semibold hover:underline">Leer más</button>
+      </div>
+    </article>
+
+    <article class="bg-white shadow rounded overflow-hidden hover:shadow-md transition">
+      <img src="blog/arrozbonito.png" alt="Arroz con Bonito" class="w-full h-48 object-cover rounded-t">
+      <div class="p-4">
+        <h2 class="text-xl font-bold mb-2">Arroz con bonito: nutritivo y rendidor</h2>
+        <p class="text-sm text-gray-600 mb-3">Una receta sabrosa y económica que puedes preparar en familia.</p>
+        <button onclick="openModal('3')" class="text-blue-600 font-semibold hover:underline">Leer más</button>
+      </div>
+    </article>
+
+    <article class="bg-white shadow rounded overflow-hidden hover:shadow-md transition">
+      <img src="blog/todos.png" alt="Tips de conservas" class="w-full h-48 object-cover rounded-t">
+      <div class="p-4">
+        <h2 class="text-xl font-bold mb-2">5 tips para sacarle el jugo a tus conservas</h2>
+        <p class="text-sm text-gray-600 mb-3">¿Sabías que puedes usarlas para más que solo sándwiches?</p>
+        <button onclick="openModal('4')" class="text-blue-600 font-semibold hover:underline">Leer más</button>
+      </div>
+    </article>
+
+    <article class="bg-white shadow rounded overflow-hidden hover:shadow-md transition">
+      <img src="blog/croquetasatun.png" alt="Croquetas de jurel" class="w-full h-48 object-cover rounded-t">
+      <div class="p-4">
+        <h2 class="text-xl font-bold mb-2">Croquetas de jurel para la lonchera</h2>
+        <p class="text-sm text-gray-600 mb-3">Ricas, crocantes y llenas de omega 3. ¡Perfectas para chicos y grandes!</p>
+        <button onclick="openModal('5')" class="text-blue-600 font-semibold hover:underline">Leer más</button>
+      </div>
+    </article>
+
+    <article class="bg-white shadow rounded overflow-hidden hover:shadow-md transition">
+      <img src="blog/anchoperuana.png" alt="Anchoveta beneficios" class="w-full h-48 object-cover rounded-t">
+      <div class="p-4">
+        <h2 class="text-xl font-bold mb-2">Beneficios de consumir anchoveta peruana</h2>
+        <p class="text-sm text-gray-600 mb-3">Un superalimento económico, accesible y con alto valor nutricional.</p>
+        <button onclick="openModal('6')" class="text-blue-600 font-semibold hover:underline">Leer más</button>
+      </div>
+    </article>
+  </main>
+
+  <!-- Modales -->
+  <div id="modales"></div>
+
+  <script>
+    const modales = [
+      {
+        id: 1,
+        img: "blog/ensaladaatun.png",
+        titulo: "Ensalada fresca con atún en conserva",
+        ingredientes: [
+          "2 latas de atún Tambomar en agua",
+          "1 lechuga americana",
+          "2 tomates grandes",
+          "1 pepino",
+          "1 cebolla morada",
+          "1 palta",
+          "Jugo de 2 limones",
+          "2 cdas. de aceite de oliva",
+          "Sal y pimienta al gusto"
+        ],
+        pasos: [
+          "Lava y corta la lechuga, tomate, pepino y cebolla.",
+          "Escurre el atún y mezcla con los vegetales.",
+          "Añade palta en cubos, jugo de limón, aceite, sal y pimienta.",
+          "Mezcla suavemente y sirve frío."
+        ]
+      },
+      {
+        id: 2,
+        img: "blog/caballatomate.png",
+        titulo: "Caballa en salsa de tomate",
+        ingredientes: [
+          "2 latas de caballa Tambomar en aceite",
+          "1 cebolla",
+          "2 dientes de ajo",
+          "3 tomates maduros",
+          "2 cdas. de pasta de tomate",
+          "1 cda. de aceite",
+          "Sal, pimienta y orégano"
+        ],
+        pasos: [
+          "Sofríe ajo y cebolla en aceite caliente.",
+          "Agrega tomates y pasta de tomate, cocina por 7 minutos.",
+          "Incorpora la caballa escurrida, condimenta y cocina 5 minutos más.",
+          "Sirve con arroz blanco o pan."
+        ]
+      },
+      {
+        id: 3,
+        img: "blog/arrozbonito.png",
+        titulo: "Arroz con bonito: nutritivo y rendidor",
+        ingredientes: [
+          "2 latas de bonito Tambomar",
+          "3 tazas de arroz cocido",
+          "1 cebolla picada",
+          "1 zanahoria en cubitos",
+          "1/2 pimiento rojo picado",
+          "2 dientes de ajo",
+          "2 cdas. de aceite",
+          "Sal, pimienta y perejil"
+        ],
+        pasos: [
+          "Sofríe ajo, cebolla, pimiento y zanahoria.",
+          "Agrega el bonito escurrido y mezcla.",
+          "Incorpora el arroz y remueve bien.",
+          "Condimenta al gusto y sirve decorado con perejil."
+        ]
+      },
+      {
+        id: 4,
+        img: "blog/todos.png",
+        titulo: "5 tips para sacarle el jugo a tus conservas",
+        pasos: [
+          "Úsalas en pastas como salsa rápida.",
+          "Agrega a ensaladas para más proteína.",
+          "Rellena empanadas con atún y huevo.",
+          "Haz tortillas u omelets con jurel.",
+          "Combínalas con arroz o fideos para platos rendidores."
+        ]
+      },
+      {
+        id: 5,
+        img: "blog/croquetasatun.png",
+        titulo: "Croquetas de jurel para la lonchera",
+        ingredientes: [
+          "2 latas de jurel Tambomar",
+          "3 papas sancochadas",
+          "1 huevo",
+          "1/2 taza de pan rallado",
+          "1/2 cebolla picada",
+          "Sal, pimienta y orégano",
+          "Aceite para freír"
+        ],
+        pasos: [
+          "Mezcla jurel con papa prensada y condimentos.",
+          "Forma bolitas, pásalas por pan rallado.",
+          "Fríe en aceite caliente hasta dorar.",
+          "Escurre y sirve con limón o ají."
+        ]
+      },
+      {
+        id: 6,
+        img: "blog/anchoperuana.png",
+        titulo: "Beneficios de consumir anchoveta peruana",
+        pasos: [
+          "Rica en omega 3: protege corazón y cerebro.",
+          "Alto contenido en calcio, hierro y fósforo.",
+          "Excelente fuente de proteína.",
+          "Accesible y económica.",
+          "Apoyas la pesca nacional sostenible."
+        ]
+      }
+    ];
+
+    document.getElementById('modales').innerHTML = modales.map(({ id, img, titulo, ingredientes, pasos }) => `
+      <div id="modal-${id}" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+        <div class="bg-white max-w-2xl w-full rounded-lg shadow-lg overflow-y-auto max-h-[90vh]">
+          <div class="relative">
+            <img src="${img}" class="w-full h-64 object-cover rounded-t-lg">
+            <button onclick="closeModal('${id}')" class="absolute top-2 right-2 bg-red-500 text-white rounded-full p-1">&times;</button>
+          </div>
+          <div class="p-6 space-y-4">
+            <h2 class="text-2xl font-bold text-orange-600">${titulo}</h2>
+            ${ingredientes ? `<h3 class="font-semibold text-gray-700">Ingredientes (para 4 personas):</h3><ul class="list-disc list-inside text-sm text-gray-700">${ingredientes.map(item => `<li>${item}</li>`).join('')}</ul>` : ''}
+            <h3 class="font-semibold text-gray-700">${ingredientes ? 'Preparación' : 'Detalles'}:</h3>
+            <ol class="list-decimal list-inside text-sm text-gray-700">${pasos.map(p => `<li>${p}</li>`).join('')}</ol>
+          </div>
+        </div>
+      </div>
+    `).join('');
+  </script>
+
+  <!-- Footer -->
+  <footer class="bg-gray-800 text-white py-8 text-center">
+    <p class="text-sm">&copy; 2025 Tambomar. Todos los derechos reservados.</p>
+    <a href="index.html" class="text-blue-400 hover:underline mt-2 block">← Volver al inicio</a>
+  </footer>
+
+</body>
+</html>

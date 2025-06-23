@@ -1,0 +1,20 @@
+[
+  {
+    "id": "ensalada-atun",
+    "title": "Ensalada fresca con atún en conserva",
+    "excerpt": "Una receta ideal para días calurosos, con mucho sabor y sin complicaciones.",
+    "img": "blog/ensaladaatun.png"
+  },
+  {
+    "id": "caballa-tomate",
+    "title": "Caballa en salsa de tomate: ¡una delicia casera!",
+    "excerpt": "Aprende a preparar este platillo sabroso en menos de 15 minutos.",
+    "img": "blog/caballatomate.png"
+  },
+  {
+    "id": "arroz-bonito",
+    "title": "Arroz con bonito: nutritivo y rendidor",
+    "excerpt": "Una receta sabrosa y económica que puedes preparar en familia.",
+    "img": "blog/arrozbonito.png"
+  }
+]

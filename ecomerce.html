@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tienda Virtual Tambomar</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Poppins', sans-serif; }
+    .active-filter { background-color: #f97316; color: white; }
+  </style>
+</head>
+<body class="bg-gray-100">
+
+<!-- Banner Promocional -->
+<div class="relative w-full h-[30vh] sm:h-[25vh] overflow-hidden">
+  <div id="slider" class="flex transition-transform duration-700 ease-in-out h-full">
+    <div class="w-full h-full flex-shrink-0"><img src="comerce/banner/ban1.jpg" class="w-full h-full object-cover" alt="Banner 1"></div>
+    <div class="w-full h-full flex-shrink-0"><img src="comerce/banner/ban2.jpg" class="w-full h-full object-cover" alt="Banner 2"></div>
+    <div class="w-full h-full flex-shrink-0"><img src="comerce/banner/ban3.jpg" class="w-full h-full object-cover" alt="Banner 3"></div>
+    <div class="w-full h-full flex-shrink-0"><img src="comerce/banner/ban4.jpg" class="w-full h-full object-cover" alt="Banner 4"></div>
+  </div>
+  <button id="leftArrow" onclick="prevSlide()" class="absolute top-1/2 left-2 transform -translate-y-1/2 bg-white bg-opacity-60 hover:bg-opacity-90 rounded-full p-2 shadow hidden">&#10094;</button>
+  <button id="rightArrow" onclick="nextSlide()" class="absolute top-1/2 right-2 transform -translate-y-1/2 bg-white bg-opacity-60 hover:bg-opacity-90 rounded-full p-2 shadow">&#10095;</button>
+</div>
+
+<!-- Layout -->
+<div class="flex flex-col md:flex-row max-w-7xl mx-auto py-6 px-4">
+  <aside class="md:w-1/4 md:pr-4 mb-6 md:mb-0">
+    <h2 class="text-xl font-semibold text-gray-700 mb-4">Filtrar por tipo</h2>
+    <div id="filterMenu" class="space-y-3">
+      <button class="block w-full px-4 py-2 rounded-full bg-white shadow hover:bg-orange-100" onclick="filterProducts('Todos')">Todos</button>
+      <button class="block w-full px-4 py-2 rounded-full bg-white shadow hover:bg-orange-100" onclick="filterProducts('Atún')">Atún</button>
+      <button class="block w-full px-4 py-2 rounded-full bg-white shadow hover:bg-orange-100" onclick="filterProducts('Bonito')">Bonito</button>
+      <button class="block w-full px-4 py-2 rounded-full bg-white shadow hover:bg-orange-100" onclick="filterProducts('Caballa')">Caballa</button>
+      <button class="block w-full px-4 py-2 rounded-full bg-white shadow hover:bg-orange-100" onclick="filterProducts('Jurel')">Jurel</button>
+      <button class="block w-full px-4 py-2 rounded-full bg-white shadow hover:bg-orange-100" onclick="filterProducts('Anchoveta')">Anchoveta</button>
+    </div>
+  </aside>
+
+  <section class="md:w-3/4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6" id="productGrid"></section>
+</div>
+
+<!-- Modal de producto -->
+<div id="productModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden px-4">
+  <div class="bg-white rounded-lg w-full max-w-md p-4 sm:p-6 relative max-h-[90vh] overflow-y-auto">
+    <button onclick="closeModal()" class="absolute top-2 right-3 text-2xl text-red-500">&times;</button>
+    <h3 id="modalTitle" class="text-xl sm:text-2xl font-bold mb-2"></h3>
+    <img id="modalImg" src="" class="w-full h-52 object-cover rounded mb-4" />
+    <p id="modalDesc" class="text-sm text-gray-600 mb-4"></p>
+    <div id="modalComments" class="text-sm text-gray-800 space-y-2 max-h-32 overflow-y-auto mb-4"></div>
+    <input type="text" id="nameInput" class="w-full border rounded px-2 py-1 text-sm mb-2" placeholder="Tu nombre...">
+    <textarea id="commentInput" class="w-full border rounded px-2 py-1 text-sm" placeholder="Deja tu comentario..."></textarea>
+    <button onclick="addComment()" class="mt-2 bg-orange-500 text-white px-4 py-1 rounded hover:bg-orange-600 text-sm">Enviar</button>
+  </div>
+</div>
+
+<!-- Botón flotante del carrito -->
+<button id="openCartBtn" onclick="toggleCartModal()" class="fixed bottom-4 right-4 bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-full shadow-lg z-50">
+  🛒 Carrito (<span id="cartCount">0</span>)
+</button>
+
+<!-- Modal del carrito - Plano y Minimalista -->
+<div id="cartModal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-40 z-50 hidden">
+  <div class="bg-white w-full max-w-lg max-h-[90vh] overflow-y-auto p-6 rounded-lg relative">
+    <button onclick="toggleCartModal()" class="absolute top-4 right-4 text-gray-500 hover:text-red-500 text-xl">&times;</button>
+    
+    <h3 class="text-xl font-semibold text-gray-800 mb-4 text-center">Carrito de Compras</h3>
+    
+    <div id="cartItems" class="space-y-3 text-sm text-gray-700"></div>
+    
+    <div class="flex justify-between items-center mt-6 border-t pt-4 text-base font-medium">
+      <span>Total:</span>
+      <span id="cartTotal" class="text-orange-600 font-semibold">S/ 0.00</span>
+    </div>
+    
+    <button onclick="finalizarCompra()" class="mt-5 w-full bg-orange-500 hover:bg-orange-600 text-white py-2 rounded-md text-sm transition">
+      Finalizar Compra
+    </button>
+  </div>
+</div>
+
+
+<!-- Modal de formulario de envío centrado -->
+<div id="checkoutModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 flex items-center justify-center">
+  <div class="bg-white rounded-2xl w-full max-w-md p-6 shadow-lg">
+    <button onclick="cerrarCheckout()" class="absolute top-2 right-3 text-2xl text-red-500">&times;</button>
+    <h3 class="text-xl font-bold mb-4 text-center text-gray-800">Datos para el envío</h3>
+    
+    <div class="flex flex-col space-y-3">
+      <input id="checkoutNombre" type="text" placeholder="Nombre completo" class="w-full border rounded px-3 py-2 text-sm text-center">
+      <input id="checkoutDireccion" type="text" placeholder="Dirección de entrega" class="w-full border rounded px-3 py-2 text-sm text-center">
+      <input id="checkoutCorreo" type="email" placeholder="Correo electrónico" class="w-full border rounded px-3 py-2 text-sm text-center">
+      <input id="checkoutTelefono" type="tel" placeholder="Teléfono" class="w-full border rounded px-3 py-2 text-sm text-center">
+    </div>
+
+    <button onclick="abrirPago()" class="mt-6 w-full bg-orange-500 hover:bg-orange-600 text-white py-2 rounded-md">Continuar a pago</button>
+  </div>
+</div>
+
+
+<!-- Confirmación -->
+<div id="confirmacionModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 justify-center items-center p-4">
+  <div class="bg-white rounded-lg w-full max-w-md p-6 text-center">
+    <h3 class="text-xl font-bold mb-4">🎉 Compra realizada con éxito</h3>
+    <p class="text-gray-700 mb-4">Nos pondremos en contacto contigo pronto.</p>
+    <button onclick="cerrarConfirmacion()" class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded">Cerrar</button>
+  </div>
+</div>
+
+<!-- Modal de métodos de pago -->
+<div id="pagoModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 flex justify-center items-center">
+  <div class="bg-white rounded-xl w-full max-w-sm p-6 relative shadow-xl">
+    <button onclick="cerrarPago()" class="absolute top-2 right-3 text-2xl text-red-500">&times;</button>
+    <h3 class="text-lg font-semibold text-gray-800 mb-4 text-center">Elige método de pago</h3>
+
+    <!-- Opciones de pago -->
+    <div class="grid grid-cols-3 gap-3 justify-center mb-4">
+      <button onclick="mostrarQR('yape')" class="bg-gray-100 hover:bg-gray-200 rounded-xl aspect-square flex items-center justify-center shadow-sm">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/Yape_logo.png" alt="Yape" class="h-8">
+      </button>
+      <button onclick="mostrarQR('plin')" class="bg-gray-100 hover:bg-gray-200 rounded-xl aspect-square flex items-center justify-center shadow-sm">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/02/Plin_logo.svg/512px-Plin_logo.svg.png" alt="Plin" class="h-8">
+      </button>
+      <button onclick="mostrarQR('tarjeta')" class="bg-gray-100 hover:bg-gray-200 rounded-xl aspect-square flex items-center justify-center shadow-sm">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/4/41/Visa_Logo.png" alt="Tarjeta" class="h-8">
+      </button>
+    </div>
+
+    <!-- QR dinámico -->
+    <div id="qrBox" class="hidden text-center">
+      <p class="text-sm text-gray-600 mb-2">Escanea con tu app bancaria:</p>
+      <img id="qrImg" src="" alt="QR de pago" class="mx-auto w-36 h-36 object-contain rounded border" />
+      <button onclick="confirmarPago()" class="mt-4 w-full bg-green-500 hover:bg-green-600 text-white py-2 rounded">He realizado el pago</button>
+    </div>
+
+    <!-- Formulario de tarjeta -->
+    <div id="tarjetaForm" class="hidden mt-2">
+      <input type="text" placeholder="Número de tarjeta" class="w-full border rounded px-3 py-2 mb-2 text-sm text-center">
+      <div class="flex gap-2 mb-2">
+        <input type="text" placeholder="MM/AA" class="w-1/2 border rounded px-3 py-2 text-sm text-center">
+        <input type="text" placeholder="CVV" class="w-1/2 border rounded px-3 py-2 text-sm text-center">
+      </div>
+      <input type="text" placeholder="Nombre del titular" class="w-full border rounded px-3 py-2 mb-4 text-sm text-center">
+      <button onclick="confirmarPago()" class="w-full bg-green-500 hover:bg-green-600 text-white py-2 rounded">Pagar</button>
+    </div>
+  </div>
+</div>
+
+
+
+
+<script>
+const productos = [
+  { tipo: "Atún", nombre: "Filete de Atún en aceite vegetal", contenido: "170gr", precio: "S/ 5.50", imagen: "comerce/productos/atunac.png" },
+  { tipo: "Atún", nombre: "Grated de Atún en aceite vegetal", contenido: "170gr", precio: "S/ 4.90", imagen: "comerce/productos/atunac.png" },
+  { tipo: "Bonito", nombre: "Filete de Bonito en aceite vegetal", contenido: "170gr", precio: "S/ 4.80", imagen: "comerce/productos/bonitoac.png" },
+  { tipo: "Bonito", nombre: "Filete de Bonito en agua y sal", contenido: "170gr", precio: "S/ 4.70", imagen: "comerce/productos/bonitoag.png" },
+  { tipo: "Bonito", nombre: "Trozos de Bonito", contenido: "170gr", precio: "S/ 4.60", imagen: "comerce/productos/bonitoac.png" },
+  { tipo: "Bonito", nombre: "Filete Bonito Dingley en aceite vegetal", contenido: "120gr", precio: "S/ 3.20", imagen: "comerce/productos/bonitod.png" },
+  { tipo: "Caballa", nombre: "Filete de Caballa en aceite vegetal", contenido: "170gr", precio: "S/ 4.20", imagen: "comerce/productos/caballaac.png" },
+  { tipo: "Caballa", nombre: "Filete de Caballa en agua y sal", contenido: "170gr", precio: "S/ 4.10", imagen: "comerce/productos/caballaag.png" },
+  { tipo: "Caballa", nombre: "Filete Caballa Dingley en aceite vegetal", contenido: "120gr", precio: "S/ 2.90", imagen: "comerce/productos/caballad.png" },
+  { tipo: "Jurel", nombre: "Filete de Jurel en aceite vegetal", contenido: "170gr", precio: "S/ 4.00", imagen: "comerce/productos/jurelac.png" },
+  { tipo: "Jurel", nombre: "Filete de Jurel en agua y sal", contenido: "170gr", precio: "S/ 3.90", imagen: "comerce/productos/jurelac.png" },
+  { tipo: "Anchoveta", nombre: "Entero de Anchoveta Dingley en aceite vegetal", contenido: "120gr", precio: "S/ 2.60", imagen: "comerce/productos/anchod.png" }
+];
+
+let carrito = JSON.parse(localStorage.getItem("carrito")) || [];
+let comentarios = JSON.parse(localStorage.getItem("comentarios")) || {};
+
+function saveCart() {
+  localStorage.setItem("carrito", JSON.stringify(carrito));
+}
+
+function updateCartCount() {
+  document.getElementById("cartCount").textContent = carrito.length;
+}
+function updateCartCount() {
+  document.getElementById("cartCount").textContent = carrito.length;
+}
+
+function filterProducts(tipo) {
+  mostrarProductos(tipo);
+}
+
+function mostrarProductos(filtro = "Todos") {
+  // ...
+}
+
+function mostrarProductos(filtro = "Todos") {
+  const grid = document.getElementById("productGrid");
+  grid.innerHTML = "";
+  productos.filter(p => filtro === "Todos" || p.tipo === filtro).forEach((p, index) => {
+    const precioNum = parseFloat(p.precio.replace("S/ ", ""));
+    grid.innerHTML += `
+      <div class="bg-white rounded-lg shadow hover:shadow-md p-4">
+        <img src="${p.imagen}" alt="${p.nombre}" class="w-full h-40 object-cover rounded mb-2">
+        <h4 class="font-semibold text-gray-800 text-lg">${p.nombre}</h4>
+        <p class="text-sm text-gray-600 mb-1">Contenido: ${p.contenido}</p>
+        <p class="text-orange-600 font-bold">S/ ${precioNum.toFixed(2)}</p>
+     <div class="my-2">
+  <label class="block text-sm text-gray-700">Cantidad:</label>
+  <select class="cantidad-select w-full border rounded px-2 py-1 text-sm">
+    ${Array.from({length: 36}, (_, i) => (i + 1) * 4)
+      .map(q => `<option value="${q}">${q} und</option>`).join('')}
+  </select>
+</div>
+
+        <div class="flex justify-between items-center mt-3">
+          <button class="bg-orange-500 text-white px-3 py-1 rounded text-sm hover:bg-orange-600" onclick="addToCart('${p.nombre}', ${precioNum}, ${index})">Añadir al carrito</button>
+          <button onclick="verProducto(${index})" class="text-sm text-blue-600 hover:underline">Ver más</button>
+        </div>
+      </div>`;
+  });
+}
+
+function addToCart(nombre, precioUnitario, index) {
+  const select = document.querySelectorAll(".cantidad-select")[index];
+  const cantidadNueva = parseInt(select.value);
+
+  const itemIndex = carrito.findIndex(item => item.nombre === nombre);
+  const itemActual = carrito[itemIndex];
+  const cantidadTotal = itemActual ? itemActual.cantidad + cantidadNueva : cantidadNueva;
+
+  if (cantidadTotal > 144) {
+    alert("No puedes añadir más de 144 unidades de este producto.");
+    return;
+  }
+
+  let descuento = 0;
+  if (cantidadTotal >= 96) descuento = 0.10;
+  else if (cantidadTotal >= 48) descuento = 0.05;
+  else if (cantidadTotal >= 24) descuento = 0.02;
+
+  const nuevoTotal = precioUnitario * cantidadTotal * (1 - descuento);
+
+  if (itemIndex !== -1) {
+    carrito[itemIndex].cantidad = cantidadTotal;
+    carrito[itemIndex].total = nuevoTotal.toFixed(2);
+  } else {
+    carrito.push({ nombre, cantidad: cantidadNueva, total: nuevoTotal.toFixed(2) });
+  }
+
+  saveCart();
+  updateCartCount();
+}
+
+function verProducto(index) {
+  const p = productos[index];
+  document.getElementById("modalTitle").textContent = p.nombre;
+  document.getElementById("modalDesc").textContent = `Presentación de ${p.contenido} de ${p.nombre}. Rico en omega 3.`;
+  document.getElementById("modalImg").src = p.imagen;
+  const commentBox = document.getElementById("modalComments");
+  const key = p.nombre;
+  commentBox.innerHTML = (comentarios[key] || []).map(c => `<p><strong>${c.nombre}</strong>: ${c.comentario}</p>`).join('');
+  document.getElementById("commentInput").value = "";
+  document.getElementById("nameInput").value = "";
+  document.getElementById("productModal").classList.remove("hidden");
+  document.getElementById("productModal").setAttribute("data-key", key);
+}
+
+function closeModal() {
+  document.getElementById("productModal").classList.add("hidden");
+}
+
+function addComment() {
+  const key = document.getElementById("productModal").getAttribute("data-key");
+  const comentario = document.getElementById("commentInput").value.trim();
+  const nombre = document.getElementById("nameInput").value.trim() || "Anónimo";
+  if (!comentarios[key]) comentarios[key] = [];
+  if (comentario) {
+    comentarios[key].push({ nombre, comentario });
+    localStorage.setItem("comentarios", JSON.stringify(comentarios));
+  }
+  verProducto(productos.findIndex(p => p.nombre === key));
+}
+
+function toggleCartModal() {
+  const modal = document.getElementById("cartModal");
+  modal.classList.toggle("hidden");
+  renderCart();
+}
+
+function renderCart() {
+  const container = document.getElementById("cartItems");
+  const total = document.getElementById("cartTotal");
+  container.innerHTML = "";
+  let totalGeneral = 0;
+  carrito.forEach((item, i) => {
+    const subtotal = parseFloat(item.total);
+    totalGeneral += subtotal;
+    container.innerHTML += `
+      <div class="border p-3 rounded shadow">
+        <div class="flex justify-between">
+          <div>
+            <p class="font-semibold">${item.nombre}</p>
+            <select onchange="cambiarCantidad(${i}, this.value)" class="mt-1 border rounded px-2 py-1 text-sm">
+  ${Array.from({length: 36}, (_, n) => (n + 1) * 4)
+    .map(q => `<option value="${q}" ${item.cantidad === q ? 'selected' : ''}>${q}</option>`)
+    .join('')}
+</select>
+          </div>
+          <div class="text-right">
+            <p class="text-sm">Total: S/ ${subtotal.toFixed(2)}</p>
+            <button onclick="eliminarDelCarrito(${i})" class="text-red-500 text-sm hover:underline">Eliminar</button>
+          </div>
+        </div>
+      </div>`;
+  });
+  total.textContent = `S/ ${totalGeneral.toFixed(2)}`;
+}
+
+function cambiarCantidad(index, nuevaCantidad) {
+  const cantidad = parseInt(nuevaCantidad);
+  if (cantidad > 144) {
+    alert("El máximo permitido por producto es 144 unidades.");
+    return;
+  }
+
+  let descuento = 0;
+  if (cantidad >= 96) descuento = 0.10;
+  else if (cantidad >= 48) descuento = 0.05;
+  else if (cantidad >= 24) descuento = 0.02;
+
+  const item = carrito[index];
+  const precioUnitarioBase = item.total / item.cantidad / (1 - (item.cantidad >= 96 ? 0.10 : item.cantidad >= 48 ? 0.05 : item.cantidad >= 24 ? 0.02 : 0));
+  const nuevoTotal = precioUnitarioBase * cantidad * (1 - descuento);
+
+  carrito[index].cantidad = cantidad;
+  carrito[index].total = nuevoTotal.toFixed(2);
+  saveCart();
+  renderCart();
+  updateCartCount();
+}
+
+function eliminarDelCarrito(index) {
+  carrito.splice(index, 1);
+  saveCart();
+  renderCart();
+  updateCartCount();
+}
+
+function finalizarCompra() {
+  document.getElementById("checkoutModal").classList.remove("hidden");
+  document.getElementById("cartModal").classList.add("hidden");
+}
+
+function cerrarCheckout() {
+  document.getElementById("checkoutModal").classList.add("hidden");
+}
+
+function confirmarCompra() {
+  // Aquí podrías validar campos o enviar info
+  localStorage.removeItem("carrito");
+  carrito = [];
+  updateCartCount();
+  document.getElementById("checkoutModal").classList.add("hidden");
+  document.getElementById("confirmacionModal").classList.remove("hidden");
+}
+
+function cerrarConfirmacion() {
+  document.getElementById("confirmacionModal").classList.add("hidden");
+}
+
+// Slider automático
+let slideIndex = 0;
+const slider = document.getElementById('slider');
+const totalSlides = slider.children.length;
+const leftArrow = document.getElementById('leftArrow');
+const rightArrow = document.getElementById('rightArrow');
+function updateSlide() {
+  slider.style.transform = `translateX(-${slideIndex * 100}%)`;
+  leftArrow.classList.toggle('hidden', slideIndex === 0);
+  rightArrow.classList.toggle('hidden', slideIndex === totalSlides - 1);
+}
+function nextSlide() { if (slideIndex < totalSlides - 1) { slideIndex++; updateSlide(); } }
+function prevSlide() { if (slideIndex > 0) { slideIndex--; updateSlide(); } }
+setInterval(() => {
+  slideIndex = (slideIndex + 1) % totalSlides;
+  updateSlide();
+}, 5000);
+
+// Inicializar
+mostrarProductos();
+updateCartCount();
+updateSlide();
+
+function confirmarCompra() {
+  document.getElementById("checkoutModal").classList.add("hidden");
+  document.getElementById("pagoModal").classList.remove("hidden");
+}
+
+function mostrarQR(tipo) {
+  document.getElementById("qrBox").classList.add("hidden");
+  document.getElementById("tarjetaForm").classList.add("hidden");
+
+  if (tipo === "yape") {
+    document.getElementById("qrImg").src = "https://via.placeholder.com/150?text=Yape+QR";
+    document.getElementById("qrBox").classList.remove("hidden");
+  } else if (tipo === "plin") {
+    document.getElementById("qrImg").src = "https://via.placeholder.com/150?text=Plin+QR";
+    document.getElementById("qrBox").classList.remove("hidden");
+  } else if (tipo === "tarjeta") {
+    document.getElementById("tarjetaForm").classList.remove("hidden");
+  }
+}
+
+function cerrarPago() {
+  document.getElementById("pagoModal").classList.add("hidden");
+  document.getElementById("qrBox").classList.add("hidden");
+  document.getElementById("tarjetaForm").classList.add("hidden");
+}
+
+function confirmarPago() {
+  document.getElementById("pagoModal").classList.add("hidden");
+  document.getElementById("confirmacionModal").classList.remove("hidden");
+}
+
+function abrirPago() {
+  document.getElementById("checkoutModal").classList.add("hidden");
+  document.getElementById("pagoModal").classList.remove("hidden");
+}
+
+
+</script>
+
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tambomar</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@1,400&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Poppins', sans-serif; }
+    @keyframes fadeInSlide {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .animate-fadeInSlide { animation: fadeInSlide 1s ease forwards; }
+    .delay-200 { animation-delay: 0.2s; }
+    .delay-400 { animation-delay: 0.4s; }
+    .no-scrollbar::-webkit-scrollbar { display: none; }
+    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    #productGrid {
+      display: flex;
+      flex-wrap: wrap;
+    }
+    .product-card {
+      width: 100%;
+      max-width: 20%;
+      flex: 1 1 20%;
+      box-sizing: border-box;
+      transition: transform 1s ease-in-out, order 1s ease-in-out;
+    }
+    @media (max-width: 768px) {
+      .product-card { max-width: 50%; flex: 1 1 50%; }
+    }
+    @media (max-width: 480px) {
+      .product-card { max-width: 100%; flex: 1 1 100%; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- Header -->
+<header class="bg-orange-500 shadow-lg">
+  <div class="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
+    <div class="flex items-end gap-3">
+      <img src="logo.png" alt="Logo Tambomar" class="w-[132px] block">
+      <span class="text-white italic text-base leading-snug pb-1">| El placer del Mar</span>
+    </div>
+    <nav class="hidden md:flex space-x-6 text-sm font-medium text-white">
+      <a href="#nosotros" class="hover:underline">Nosotros</a>
+      <a href="ecomerce.html" class="hover:underline">Tienda virtual</a>
+      <a href="Blog.html" class="hover:underline">Blog</a>
+      <a href="#mayor" class="hover:underline">Compras por mayor</a>
+      <a href="#contacto" class="hover:underline">Contacto</a>
+    </nav>
+    <div class="md:hidden">
+      <button id="menuBtn" class="text-white text-3xl" aria-label="Abrir menú móvil">&#9776;</button>
+    </div>
+  </div>
+</header>
+<div id="mobileMenu" class="fixed top-16 left-0 w-full bg-green-100 bg-opacity-90 text-gray-800 hidden z-50 flex-col space-y-4 p-4 md:hidden">
+  <a href="#nosotros" onclick="closeMobileMenu()" class="block hover:bg-green-200 px-4 py-2 rounded">Nosotros</a>
+  <a href="ecomerce.html" onclick="closeMobileMenu()" class="block hover:bg-green-200 px-4 py-2 rounded">Tienda virtual</a>
+  <a href="Blog.html" onclick="closeMobileMenu()" class="block hover:bg-green-200 px-4 py-2 rounded">Blog</a>
+  <a href="#mayor" onclick="closeMobileMenu()" class="block hover:bg-green-200 px-4 py-2 rounded">Compras por mayor</a>
+  <a href="#contacto" onclick="closeMobileMenu()" class="block hover:bg-green-200 px-4 py-2 rounded">Contacto</a>
+</div>
+
+<!-- Banner principal -->
+<header class="relative h-[81vh] bg-cover bg-center" style="background-image: url('banner/banner1.jpg');">
+  <div class="bg-black bg-opacity-60 h-full w-full flex flex-col justify-center items-start text-white text-left px-8 md:px-20 space-y-3">
+    <h1 class="text-4xl md:text-5xl font-extrabold leading-tight opacity-0 animate-fadeInSlide">
+      El verdadero placer del mar<br />
+      <span class="text-white">en tu mesa.</span>
+    </h1>
+    <a href="#productos" class="mt-3 bg-white text-black px-5 py-2 rounded-md text-sm md:text-base hover:bg-gray-200 transition-opacity opacity-0 animate-fadeInSlide delay-400">Ver productos</a>
+  </div>
+</header>
+
+<!-- Animaciones personalizadas -->
+<style>
+  @keyframes fadeInSlide {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .animate-fadeInSlide {
+    animation: fadeInSlide 1s ease forwards;
+  }
+
+  .delay-200 {
+    animation-delay: 0.2s;
+  }
+
+  .delay-400 {
+    animation-delay: 0.4s;
+  }
+</style>
+
+<!-- Sección de productos destacados en estilo tarjetas -->
+<section id="productos" class="py-16 px-6 max-w-7xl mx-auto">
+  <h2 class="text-3xl font-bold text-center mb-12 text-orange-600">Conservas de pescado</h2>
+
+  <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
+    
+    <!-- Producto 1 -->
+    <button onclick="showProductModal('atún')" class="bg-green-50 p-6 rounded-xl shadow hover:shadow-lg transition flex flex-col items-center text-center">
+      <img src="images/bonito.jpeg" alt="Atún" class="mb-4 h-24 w-24 object-cover rounded-full border-4 border-white shadow">
+      <h3 class="text-green-700 font-bold text-sm mb-1">CONSERVAS DE ATÚN</h3>
+      <p class="text-gray-600 text-sm">Alto en proteínas, ideal para una dieta saludable.</p>
+    </button>
+
+    <!-- Producto 2 -->
+    <button onclick="showProductModal('caballa')" class="bg-green-50 p-6 rounded-xl shadow hover:shadow-lg transition flex flex-col items-center text-center">
+      <img src="images/bonito.jpeg" alt="Caballa" class="mb-4 h-24 w-24 object-cover rounded-full border-4 border-white shadow">
+      <h3 class="text-green-700 font-bold text-sm mb-1">CONSERVAS DE CABALLA</h3>
+      <p class="text-gray-600 text-sm">Sabor intenso, ideal para platos peruanos.</p>
+    </button>
+
+    <!-- Producto 3 -->
+    <button onclick="showProductModal('bonito')" class="bg-green-50 p-6 rounded-xl shadow hover:shadow-lg transition flex flex-col items-center text-center">
+      <img src="images/bonito.jpeg" alt="Bonito" class="mb-4 h-24 w-24 object-cover rounded-full border-4 border-white shadow">
+      <h3 class="text-green-700 font-bold text-sm mb-1">CONSERVAS DE BONITO</h3>
+      <p class="text-gray-600 text-sm">Un clásico peruano para disfrutar en familia.</p>
+    </button>
+
+    <!-- Producto 4 -->
+    <button onclick="showProductModal('jurel')" class="bg-green-50 p-6 rounded-xl shadow hover:shadow-lg transition flex flex-col items-center text-center">
+      <img src="images/bonito.jpeg" alt="Jurel" class="mb-4 h-24 w-24 object-cover rounded-full border-4 border-white shadow">
+      <h3 class="text-green-700 font-bold text-sm mb-1">CONSERVAS DE JUREL</h3>
+      <p class="text-gray-600 text-sm">Fresco, sabroso y rico en omega 3.</p>
+    </button>
+
+    <!-- Producto 5 -->
+    <button onclick="showProductModal('anchoveta')" class="bg-green-50 p-6 rounded-xl shadow hover:shadow-lg transition flex flex-col items-center text-center">
+      <img src="images/bonito.jpeg" alt="Anchoveta" class="mb-4 h-24 w-24 object-cover rounded-full border-4 border-white shadow">
+      <h3 class="text-green-700 font-bold text-sm mb-1">CONSERVAS DE ANCHOVETA</h3>
+      <p class="text-gray-600 text-sm">Rica en calcio, perfecta para toda la familia.</p>
+    </button>
+
+  </div>
+</section>
+
+
+<!-- Modal Producto Detalles -->
+<div id="productDetailsModal" class="fixed inset-0 bg-black bg-opacity-60 flex justify-center items-center z-50 hidden">
+  <div class="bg-green-50 rounded-2xl shadow-lg max-w-md w-full p-6 relative">
+    <div class="flex flex-col items-center text-center">
+      <img id="modalImage" src="" alt="Producto" class="w-full h-48 object-cover rounded-xl border-4 border-white shadow mb-4">
+      <h3 id="productTitle" class="text-green-700 text-xl font-bold mb-2"></h3>
+      <p id="productBenefits" class="text-gray-700 text-sm mb-4"></p>
+      <a id="goToStoreBtn" href="#" class="px-4 py-1.5 bg-orange-500 text-white text-sm rounded hover:bg-orange-600 transition">
+        Ver en tienda
+      </a>
+    </div>
+  </div>
+</div>
+
+<script>
+  const productData = {
+    'atún': {
+      title: 'Conservas de Atún',
+      benefits: 'Rico en omega-3, proteínas de alta calidad y bajo en grasas saturadas. Ideal para la salud cardiovascular y la energía diaria.',
+      images: ['images/fatun.png'],
+      filter: 'atun'
+    },
+    'caballa': {
+      title: 'Conservas de Caballa',
+      benefits: 'Excelente fuente de ácidos grasos omega-3, vitamina D y B12. Contribuye al sistema inmunológico y a la salud cerebral.',
+      images: ['images/fcaballa.png'],
+      filter: 'caballa'
+    },
+    'bonito': {
+      title: 'Conservas de Bonito',
+      benefits: 'Alto contenido proteico, ideal para una dieta equilibrada. Contiene nutrientes esenciales como fósforo, selenio y niacina.',
+      images: ['images/fbonito.png'],
+      filter: 'bonito'
+    },
+    'jurel': {
+      title: 'Conservas de Jurel',
+      benefits: 'Fuente importante de omega-3 y proteínas. Beneficia la memoria, el corazón y el sistema circulatorio.',
+      images: ['images/fjurel.png'],
+      filter: 'jurel'
+    },
+    'anchoveta': {
+      title: 'Conservas de Anchoveta',
+      benefits: 'Pequeño en tamaño pero poderoso en nutrientes. Rico en calcio, hierro y omega-3. Fortalece huesos y combate la anemia.',
+      images: ['images/anchoveta.png'],
+      filter: 'anchoveta'
+    }
+  };
+
+  function showProductModal(type) {
+    const data = productData[type];
+    document.getElementById('productTitle').textContent = data.title;
+    document.getElementById('productBenefits').textContent = data.benefits;
+    document.getElementById('modalImage').src = data.images[0];
+    document.getElementById('goToStoreBtn').href = `ecomerce.html?filtro=${data.filter}`;
+    document.getElementById('productDetailsModal').classList.remove('hidden');
+  }
+
+</script>
+
+<!-- Video Nosotros -->
+<section id="nosotros" class="relative h-[60vh] overflow-hidden my-16">
+  <video autoplay muted loop playsinline class="absolute top-0 left-0 w-full h-full object-cover z-0">
+    <source src="video/video1.mp4" type="video/mp4">
+  </video>
+  <div class="absolute top-0 left-0 w-full h-full bg-black bg-opacity-60 z-10 flex items-center justify-center">
+    <h2 class="text-white text-3xl md:text-4xl font-semibold text-center px-4">"Calidad y Pasión" detrás de una gran marca</h2>
+  </div>
+</section>
+
+<!-- Tienda virtual con fila horizontal fija y animación -->
+<section id="tienda" class="py-12 px-6 max-w-7xl mx-auto">
+  <h2 class="text-2xl font-bold text-center mb-8">Nuestra selección de conservas</h2>
+  <div id="productRow" class="flex flex-nowrap gap-6 overflow-x-auto no-scrollbar px-1">
+    <div class="product-card flex-shrink-0 w-64 text-center transition-all duration-500 ease-in-out bg-white rounded-xl shadow p-4">
+      <img src="images/fatun.png" class="mx-auto mb-2 rounded-xl w-full h-32 object-cover">
+      <p class="font-medium text-sm mt-1">Filete de Atún en Aceite</p>
+    </div>
+    <div class="product-card flex-shrink-0 w-64 text-center transition-all duration-500 ease-in-out bg-white rounded-xl shadow p-4">
+      <img src="images/fbonito.png" class="mx-auto mb-2 rounded-xl w-full h-32 object-cover">
+      <p class="font-medium text-sm mt-1">Filete de Bonito en Aceite</p>
+    </div>
+    <div class="product-card flex-shrink-0 w-64 text-center transition-all duration-500 ease-in-out bg-white rounded-xl shadow p-4">
+      <img src="images/fcaballa.png" class="mx-auto mb-2 rounded-xl w-full h-32 object-cover">
+      <p class="font-medium text-sm mt-1">Filete de Caballa en Aceite</p>
+    </div>
+    <div class="product-card flex-shrink-0 w-64 text-center transition-all duration-500 ease-in-out bg-white rounded-xl shadow p-4">
+      <img src="images/fjurel.png" class="mx-auto mb-2 rounded-xl w-full h-32 object-cover">
+      <p class="font-medium text-sm mt-1">Filete de Jurel en Aceite</p>
+    </div>
+    <div class="product-card flex-shrink-0 w-64 text-center transition-all duration-500 ease-in-out bg-white rounded-xl shadow p-4">
+      <img src="images/anchoveta.png" class="mx-auto mb-2 rounded-xl w-full h-32 object-cover">
+      <p class="font-medium text-sm mt-1">Entero de Anchoveta</p>
+    </div>
+  </div>
+</section>
+
+<!-- Blog -->
+<section id="blog" class="py-16 px-6 max-w-7xl mx-auto">
+  <h2 class="text-2xl font-bold mb-6 text-center">Últimos artículos del blog</h2>
+  <div id="blogPosts" class="grid grid-cols-1 md:grid-cols-3 gap-6"></div>
+</section>
+
+<!-- Mayoristas -->
+<section id="mayor" class="py-16 px-6 max-w-7xl mx-auto text-center bg-gray-50">
+  <h2 class="text-2xl font-bold mb-4">¿Compras por mayor?</h2>
+  <p class="text-gray-700">Contáctanos directamente para precios especiales, atención personalizada y entrega rápida.</p>
+  <p class="text-gray-500">*Compra minima 50 cajas.</p>
+  <button onclick="document.getElementById('formModal').classList.remove('hidden')" class="mt-4 bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700">Solicitar</button>
+</section>
+
+<!-- Modal Formulario -->
+<div id="formModal" class="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center hidden z-50">
+  <div class="bg-white rounded-lg p-8 max-w-lg w-full relative">
+    <button onclick="document.getElementById('formModal').classList.add('hidden')" class="absolute top-2 right-3 text-gray-500 text-2xl">&times;</button>
+    <h3 class="text-xl font-bold mb-4">Formulario de Solicitud</h3>
+   <form id="formularioMayor" action="https://script.google.com/macros/s/AKfycbxLT0jsJt9rrudWV7FQhyv61LwCauGFMvekdlD_IjmgySD5SjwcMqI_f9cLFOgL-G5M/exec" method="POST">
+      <div class="mb-4">
+        <label class="block text-sm font-medium mb-1">Nombre completo *</label>
+        <input name="nombre" type="text" required class="w-full border px-3 py-2 rounded">
+      </div>
+      <div class="mb-4">
+        <label class="block text-sm font-medium mb-1">DNI *</label>
+        <input name="dni" type="text" required class="w-full border px-3 py-2 rounded">
+      </div>
+      <div class="mb-4">
+        <label class="block text-sm font-medium mb-1">Teléfono *</label>
+        <input name="telefono" type="tel" required class="w-full border px-3 py-2 rounded">
+      </div>
+      <div class="mb-4">
+        <label class="block text-sm font-medium mb-1">Correo electrónico</label>
+        <input name="correo" type="email" class="w-full border px-3 py-2 rounded">
+      </div>
+      <div class="mb-4">
+        <label class="block text-sm font-medium mb-1">Razón social (Opcional)</label>
+        <input name="razon_social" type="text" class="w-full border px-3 py-2 rounded">
+      </div>
+      <div class="mb-4">
+        <label class="block text-sm font-medium mb-1">RUC (Opcional)</label>
+        <input name="ruc" type="text" class="w-full border px-3 py-2 rounded">
+      </div>
+      <p class="text-sm text-gray-600 mb-4">Nos comunicaremos contigo a la brevedad. Tus datos serán usados únicamente con fines comerciales y no serán compartidos con terceros.</p>
+      <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">Enviar</button>
+      <p id="estado" class="mt-4 text-green-600 hidden">✅ Formulario enviado correctamente</p>
+    </form>
+  </div>
+</div>
+
+
+<!-- Footer -->
+<footer id="contacto" class="bg-gray-900 text-white py-10">
+  <div class="max-w-7xl mx-auto px-6 grid grid-cols-1 md:grid-cols-3 gap-6">
+    <div>
+      <h4 class="font-semibold mb-2">Contacto</h4>
+      <p>Tel. Ventas: +51 980 980 080</p>
+      <p>Atención al público: +51 970 619 082</p>
+      <p>Email ventas: ventas.tambomar@gmail.com</p>
+      <p>Email soporte: atencion.tambomar@gmail.com</p>
+    </div>
+    <div>
+      <h4 class="font-semibold mb-2">Redes Sociales</h4>
+      <div class="flex gap-4 mt-2">
+        <a href="https://www.facebook.com/tambomarperu"><img src="images_recurso/facebook.png" alt="Facebook" class="w-6 h-6"></a>
+        <a href="https://www.instagram.com/tambomarperu/"><img src="images_recurso/instagram.png" alt="Instagram" class="w-6 h-6"></a>
+        <a href="https://www.tiktok.com/@tambomarperu"><img src="images_recurso/tiktok.png" alt="Tiktok" class="w-6 h-6"></a>
+        <a href="#"><img src="icons/tiktok.png" alt="Linkedin" class="w-6 h-6"></a>
+      </div>
+    </div>
+    <div>
+      <h4 class="font-semibold mb-2">Ubicación</h4>
+      <p>Calle Mar 123, Lima - Perú</p>
+      <p>Lunes a Viernes: 9am - 6pm</p>
+    </div>
+  </div>
+  <div class="text-center text-sm text-gray-400 mt-6">&copy; 2025 Conservas del Mar. Todos los derechos reservados.</div>
+</footer>
+
+<script>
+  document.getElementById('menuBtn').addEventListener('click', () => {
+    document.getElementById('mobileMenu').classList.toggle('hidden');
+  });
+  function closeMobileMenu() {
+    document.getElementById('mobileMenu').classList.add('hidden');
+  }
+</script>
+
+<script>
+  fetch('blogart.json')
+    .then(response => {
+      if (!response.ok) {
+        throw new Error("Archivo no encontrado o error de red");
+      }
+      return response.json();
+    })
+    .then(data => {
+      const container = document.getElementById('blogPosts');
+      container.innerHTML = ""; // Limpiar contenido anterior
+      const latestPosts = data.slice(0, 3); // Solo los 3 primeros
+
+      latestPosts.forEach(post => {
+        const article = document.createElement('article');
+        article.className = 'bg-white shadow rounded overflow-hidden hover:shadow-lg transition';
+
+        article.innerHTML = `
+          <img src="${post.img}" alt="${post.title}" class="w-full h-48 object-cover">
+          <div class="p-4">
+            <h3 class="text-xl font-bold mb-2">${post.title}</h3>
+            <p class="text-sm text-gray-600 mb-3">${post.excerpt}</p>
+            <a href="Blog.html#${post.id}" class="text-blue-600 font-semibold hover:underline">Leer más</a>
+          </div>
+        `;
+
+        container.appendChild(article);
+      });
+    })
+    .catch(error => {
+      console.error("Error al cargar los artículos del blog:", error);
+      document.getElementById('blogPosts').innerHTML = '<p class="text-center text-red-600">No se pudieron cargar los artículos.</p>';
+    });
+
+</script>
+
+<script>
+  const formMayor = document.getElementById('formularioMayor');
+  const estado = document.getElementById('estado');
+
+  formMayor.addEventListener('submit', function(e) {
+    e.preventDefault();
+    const datos = new FormData(formMayor);
+
+    fetch(formMayor.action, {
+      method: 'POST',
+      body: datos
+    })
+    .then(() => {
+      estado.textContent = '✅ Formulario enviado correctamente';
+      estado.classList.remove('hidden', 'text-red-600');
+      estado.classList.add('text-green-600');
+      formMayor.reset();
+      setTimeout(() => estado.classList.add('hidden'), 4000);
+    })
+    .catch(() => {
+      estado.textContent = '❌ Error al enviar. Intenta más tarde.';
+      estado.classList.remove('hidden', 'text-green-600');
+      estado.classList.add('text-red-600');
+    });
+  });
+</script>
+
+
+<!-- Botón flotante de WhatsApp -->
+<a href="https://wa.me/51970619082?text=Hola%20Tambomar%2C%20quiero%20más%20información%20sobre%20las%20conservas%20por%20mayor" 
+   class="fixed bottom-4 right-4 bg-green-500 p-4 rounded-full shadow-lg hover:bg-green-600 z-50" 
+   target="_blank" 
+   aria-label="Chatear por WhatsApp">
+  <img src="https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/whatsapp.svg" alt="WhatsApp" class="w-6 h-6 invert">
+</a>
+
+<style>
+  #productGrid {
+    display: flex;
+    flex-wrap: wrap;
+  }
+
+  .product-card {
+    width: 100%;
+    max-width: 20%;
+    flex: 1 1 20%;
+    box-sizing: border-box;
+    transition: transform 1s ease-in-out, order 1s ease-in-out;
+  }
+
+  @media (max-width: 768px) {
+    .product-card {
+      max-width: 50%;
+      flex: 1 1 50%;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .product-card {
+      max-width: 100%;
+      flex: 1 1 100%;
+    }
+  }
+</style>
+
+<script>
+  const row = document.getElementById('productRow');
+  const cards = Array.from(row.children);
+
+  function reorderCards() {
+    const shuffled = [...cards].sort(() => Math.random() - 0.5);
+    shuffled.forEach(card => row.appendChild(card));
+  }
+
+  reorderCards();
+  setInterval(reorderCards, 4000);
+</script>
+
+</body>
+</html>
+
+<script>
+  // Cerrar modal al presionar Escape o hacer clic fuera
+  document.addEventListener('keydown', function (event) {
+    if (event.key === 'Escape') {
+      document.getElementById('productDetailsModal').classList.add('hidden');
+    }
+  });
+
+  document.getElementById('productDetailsModal').addEventListener('click', function (e) {
+    if (e.target === this) {
+      this.classList.add('hidden');
+    }
+  });
+</script>
