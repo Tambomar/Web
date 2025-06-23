@@ -9,6 +9,44 @@
   <style>
     body { font-family: 'Poppins', sans-serif; }
     .active-filter { background-color: #f97316; color: white; }
+
+    .notif-descuento-contenedor {
+  position: relative;
+  overflow: visible;
+  min-height: 2rem; /* espacio para que no salte layout */
+  text-align: center;
+}
+
+.notif-descuento {
+  display: inline-block;
+  background-color: #22c55e; /* verde */
+  color: white;
+  padding: 0.25rem 0.75rem;
+  border-radius: 9999px;
+  font-weight: 600;
+  font-size: 0.875rem; /* text-sm */
+  user-select: none;
+  box-shadow: 0 4px 6px rgb(34 197 94 / 0.5);
+  animation: fadeIn 0.5s ease forwards;
+}
+
+.emoji-corazon {
+  display: inline-block;
+  margin-left: 6px;
+  animation: palpito 1s ease-in-out infinite;
+  transform-origin: center;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes palpito {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.3); }
+}
+
   </style>
 </head>
 <body class="bg-gray-100">
@@ -199,21 +237,74 @@ function mostrarProductos(filtro = "Todos") {
         <img src="${p.imagen}" alt="${p.nombre}" class="w-full h-40 object-cover rounded mb-2">
         <h4 class="font-semibold text-gray-800 text-lg">${p.nombre}</h4>
         <p class="text-sm text-gray-600 mb-1">Contenido: ${p.contenido}</p>
-        <p class="text-orange-600 font-bold">S/ ${precioNum.toFixed(2)}</p>
-     <div class="my-2">
-  <label class="block text-sm text-gray-700">Cantidad:</label>
-  <select class="cantidad-select w-full border rounded px-2 py-1 text-sm">
-    ${Array.from({length: 36}, (_, i) => (i + 1) * 4)
-      .map(q => `<option value="${q}">${q} und</option>`).join('')}
-  </select>
-</div>
+        
+        <p class="text-sm text-gray-500 line-through" id="precioOriginal-${index}">S/ ${precioNum.toFixed(2)}</p>
+        <p class="text-orange-600 font-bold mb-2" id="precioDescuento-${index}">S/ ${precioNum.toFixed(2)}</p>
+        
+        <div class="my-2">
+          <label class="block text-sm text-gray-700">Cantidad:</label>
+          <select onchange="actualizarPrecio(${index}, this.value)" class="cantidad-select w-full border rounded px-2 py-1 text-sm">
+            <option value="12">12 unidades</option>
+            <option value="24">24 unidades</option>
+            <option value="48">1 caja (48 unidades)</option>
+            ${Array.from({length: 99}, (_, i) => {
+              const cajas = i + 2;
+              const unidades = cajas * 48;
+              return `<option value="${unidades}">${cajas} cajas</option>`;
+            }).join('')}
+          </select>
+        </div>
+              <div id="notifDescuentoContenedor-${index}" class="notif-descuento-contenedor h-8 mt-2"></div>
 
         <div class="flex justify-between items-center mt-3">
           <button class="bg-orange-500 text-white px-3 py-1 rounded text-sm hover:bg-orange-600" onclick="addToCart('${p.nombre}', ${precioNum}, ${index})">Añadir al carrito</button>
           <button onclick="verProducto(${index})" class="text-sm text-blue-600 hover:underline">Ver más</button>
         </div>
-      </div>`;
+      </div>`;      
+
   });
+
+  // Inicializar precios con la cantidad por defecto (12 unidades)
+  productos.filter(p => filtro === "Todos" || p.tipo === filtro).forEach((p, index) => {
+    actualizarPrecio(index, 12);
+  });
+}
+
+function actualizarPrecio(index, cantidadStr) {
+  const cantidad = parseInt(cantidadStr);
+
+  const producto = productos[index];
+  const precioUnitario = parseFloat(producto.precio.replace("S/ ", ""));
+
+  // Calcular descuento según cantidad
+  let descuento = 0;
+  if (cantidad >= 96) descuento = 0.10;
+  else if (cantidad >= 48) descuento = 0.05;
+  else if (cantidad >= 24) descuento = 0.02;
+
+  if (descuento > 0) {
+  mostrarNotificacionDescuento(index, descuento);
+} else {
+  const contenedor = document.getElementById(`notifDescuentoContenedor-${index}`);
+  if (contenedor) contenedor.innerHTML = "";
+}
+
+  const precioOriginalTotal = precioUnitario * cantidad;
+  const precioConDescuento = precioOriginalTotal * (1 - descuento);
+
+  // Actualizar en el DOM
+  const elemOriginal = document.getElementById(`precioOriginal-${index}`);
+  const elemDescuento = document.getElementById(`precioDescuento-${index}`);
+
+  if (descuento > 0) {
+    elemOriginal.textContent = `S/ ${precioOriginalTotal.toFixed(2)}`;
+    elemDescuento.textContent = `S/ ${precioConDescuento.toFixed(2)}`;
+    elemOriginal.style.display = "block";
+  } else {
+    // Sin descuento, mostrar solo precio normal sin tachado
+    elemOriginal.style.display = "none";
+    elemDescuento.textContent = `S/ ${precioOriginalTotal.toFixed(2)}`;
+  }
 }
 
 function addToCart(nombre, precioUnitario, index) {
@@ -224,10 +315,11 @@ function addToCart(nombre, precioUnitario, index) {
   const itemActual = carrito[itemIndex];
   const cantidadTotal = itemActual ? itemActual.cantidad + cantidadNueva : cantidadNueva;
 
-  if (cantidadTotal > 144) {
-    alert("No puedes añadir más de 144 unidades de este producto.");
-    return;
-  }
+  if (cantidadTotal > 4800) {
+  alert("No puedes añadir más de 100 cajas (4800 unidades) de este producto.");
+  return;
+}
+
 
   let descuento = 0;
   if (cantidadTotal >= 96) descuento = 0.10;
@@ -297,10 +389,17 @@ function renderCart() {
           <div>
             <p class="font-semibold">${item.nombre}</p>
             <select onchange="cambiarCantidad(${i}, this.value)" class="mt-1 border rounded px-2 py-1 text-sm">
-  ${Array.from({length: 36}, (_, n) => (n + 1) * 4)
-    .map(q => `<option value="${q}" ${item.cantidad === q ? 'selected' : ''}>${q}</option>`)
-    .join('')}
+  <option value="12" ${item.cantidad === 12 ? 'selected' : ''}>12 unidades</option>
+  <option value="24" ${item.cantidad === 24 ? 'selected' : ''}>24 unidades</option>
+  <option value="48" ${item.cantidad === 48 ? 'selected' : ''}>1 caja (48 unidades)</option>
+  <option value="96" ${item.cantidad === 96 ? 'selected' : ''}>2 cajas (96 unidades)</option>
+  ${Array.from({length: 98}, (_, j) => {
+    const cajas = j + 3;
+    const unidades = cajas * 48;
+    return `<option value="${unidades}" ${item.cantidad === unidades ? 'selected' : ''}>${cajas} cajas (${unidades} unidades)</option>`;
+  }).join('')}
 </select>
+
           </div>
           <div class="text-right">
             <p class="text-sm">Total: S/ ${subtotal.toFixed(2)}</p>
@@ -314,10 +413,11 @@ function renderCart() {
 
 function cambiarCantidad(index, nuevaCantidad) {
   const cantidad = parseInt(nuevaCantidad);
-  if (cantidad > 144) {
-    alert("El máximo permitido por producto es 144 unidades.");
-    return;
-  }
+  if (cantidad > 4800) {
+  alert("El máximo permitido por producto es 100 cajas (4800 unidades).");
+  return;
+}
+
 
   let descuento = 0;
   if (cantidad >= 96) descuento = 0.10;
@@ -423,9 +523,36 @@ function abrirPago() {
   document.getElementById("pagoModal").classList.remove("hidden");
 }
 
+function mostrarNotificacionDescuento(index, descuento) {
+  const contenedor = document.getElementById(`notifDescuentoContenedor-${index}`);
+
+  // Limpiar notificaciones previas
+  contenedor.innerHTML = "";
+
+  const notif = document.createElement("div");
+  notif.className = "notif-descuento";
+
+  const texto = document.createElement("span");
+  texto.textContent = `Obtuviste ${ (descuento * 100).toFixed(0) }% de descuento`;
+
+  const emoji = document.createElement("span");
+  emoji.className = "emoji-corazon";
+  emoji.textContent = "❤️";
+
+  notif.appendChild(texto);
+  notif.appendChild(emoji);
+
+  contenedor.appendChild(notif);
+
+  // Ocultar después de 3 segundos
+  setTimeout(() => {
+    notif.style.opacity = "0";
+    notif.style.transition = "opacity 0.5s ease";
+    setTimeout(() => contenedor.innerHTML = "", 500);
+  }, 10000);
+}
 
 </script>
-
 
 </script>
 
