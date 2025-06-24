@@ -48,6 +48,29 @@
 }
 
   </style>
+
+  <style>
+  @keyframes heartbeat {
+    0%, 100% { transform: scale(1); }
+    25% { transform: scale(1.15); }
+    50% { transform: scale(0.95); }
+    75% { transform: scale(1.1); }
+  }
+
+  .animate-heartbeat {
+    animation: heartbeat 1s infinite;
+  }
+
+  @keyframes notifEnter {
+    0% { transform: translateY(20px); opacity: 0; }
+    100% { transform: translateY(0); opacity: 1; }
+  }
+
+  .animate-notif-enter {
+    animation: notifEnter 0.5s ease-out;
+  }
+</style>
+
 </head>
 <body class="bg-gray-100">
 
@@ -195,7 +218,7 @@ const productos = [
   { tipo: "Atún", nombre: "Grated de Atún en aceite vegetal", contenido: "170gr", precio: "S/ 4.90", imagen: "comerce/productos/atunac.png" },
   { tipo: "Bonito", nombre: "Filete de Bonito en aceite vegetal", contenido: "170gr", precio: "S/ 4.80", imagen: "comerce/productos/bonitoac.png" },
   { tipo: "Bonito", nombre: "Filete de Bonito en agua y sal", contenido: "170gr", precio: "S/ 4.70", imagen: "comerce/productos/bonitoag.png" },
-  { tipo: "Bonito", nombre: "Trozos de Bonito", contenido: "170gr", precio: "S/ 4.60", imagen: "comerce/productos/bonitoac.png" },
+  { tipo: "Bonito", nombre: "Trozos de Bonito en aceite ", contenido: "170gr", precio: "S/ 4.60", imagen: "comerce/productos/bonitoac.png" },
   { tipo: "Bonito", nombre: "Filete Bonito Dingley en aceite vegetal", contenido: "120gr", precio: "S/ 3.20", imagen: "comerce/productos/bonitod.png" },
   { tipo: "Caballa", nombre: "Filete de Caballa en aceite vegetal", contenido: "170gr", precio: "S/ 4.20", imagen: "comerce/productos/caballaac.png" },
   { tipo: "Caballa", nombre: "Filete de Caballa en agua y sal", contenido: "170gr", precio: "S/ 4.10", imagen: "comerce/productos/caballaag.png" },
@@ -224,23 +247,25 @@ function filterProducts(tipo) {
 }
 
 function mostrarProductos(filtro = "Todos") {
-  // ...
-}
-
-function mostrarProductos(filtro = "Todos") {
   const grid = document.getElementById("productGrid");
   grid.innerHTML = "";
+
   productos.filter(p => filtro === "Todos" || p.tipo === filtro).forEach((p, index) => {
     const precioNum = parseFloat(p.precio.replace("S/ ", ""));
+    const nombrePartes = p.nombre.split(" en ");
+    const linea1 = nombrePartes[0];
+    const linea2 = nombrePartes[1] ? `en ${nombrePartes[1]}` : "";
+
     grid.innerHTML += `
       <div class="bg-white rounded-lg shadow hover:shadow-md p-4">
         <img src="${p.imagen}" alt="${p.nombre}" class="w-full h-40 object-cover rounded mb-2">
-        <h4 class="font-semibold text-gray-800 text-lg">${p.nombre}</h4>
+        
+        <h4 class="font-semibold text-gray-800 text-base leading-snug">${linea1}</h4>
+        <p class="text-xs text-gray-500 -mt-1 mb-1">${linea2}</p>
+
         <p class="text-sm text-gray-600 mb-1">Contenido: ${p.contenido}</p>
-        
-        <p class="text-sm text-gray-500 line-through" id="precioOriginal-${index}">S/ ${precioNum.toFixed(2)}</p>
-        <p class="text-orange-600 font-bold mb-2" id="precioDescuento-${index}">S/ ${precioNum.toFixed(2)}</p>
-        
+        <p class="text-orange-600 font-bold">S/ ${precioNum.toFixed(2)}</p>
+
         <div class="my-2">
           <label class="block text-sm text-gray-700">Cantidad:</label>
           <select onchange="actualizarPrecio(${index}, this.value)" class="cantidad-select w-full border rounded px-2 py-1 text-sm">
@@ -254,21 +279,18 @@ function mostrarProductos(filtro = "Todos") {
             }).join('')}
           </select>
         </div>
-              <div id="notifDescuentoContenedor-${index}" class="notif-descuento-contenedor h-8 mt-2"></div>
+
+        <div id="notifDescuentoContenedor-${index}" class="notif-descuento-contenedor h-8 mt-2"></div>
 
         <div class="flex justify-between items-center mt-3">
           <button class="bg-orange-500 text-white px-3 py-1 rounded text-sm hover:bg-orange-600" onclick="addToCart('${p.nombre}', ${precioNum}, ${index})">Añadir al carrito</button>
           <button onclick="verProducto(${index})" class="text-sm text-blue-600 hover:underline">Ver más</button>
         </div>
-      </div>`;      
-
-  });
-
-  // Inicializar precios con la cantidad por defecto (12 unidades)
-  productos.filter(p => filtro === "Todos" || p.tipo === filtro).forEach((p, index) => {
-    actualizarPrecio(index, 12);
+      </div>
+    `;
   });
 }
+
 
 function actualizarPrecio(index, cantidadStr) {
   const cantidad = parseInt(cantidadStr);
@@ -316,18 +338,21 @@ function addToCart(nombre, precioUnitario, index) {
   const cantidadTotal = itemActual ? itemActual.cantidad + cantidadNueva : cantidadNueva;
 
   if (cantidadTotal > 4800) {
-  alert("No puedes añadir más de 100 cajas (4800 unidades) de este producto.");
-  return;
-}
+    alert("No puedes añadir más de 100 cajas (4800 unidades) de este producto.");
+    return;
+  }
 
-
+  // Calcular descuento
   let descuento = 0;
   if (cantidadTotal >= 96) descuento = 0.10;
   else if (cantidadTotal >= 48) descuento = 0.05;
   else if (cantidadTotal >= 24) descuento = 0.02;
 
-  const nuevoTotal = precioUnitario * cantidadTotal * (1 - descuento);
+  const totalSinDescuento = precioUnitario * cantidadTotal;
+  const nuevoTotal = totalSinDescuento * (1 - descuento);
+  const ahorro = totalSinDescuento - nuevoTotal;
 
+  // Actualizar carrito
   if (itemIndex !== -1) {
     carrito[itemIndex].cantidad = cantidadTotal;
     carrito[itemIndex].total = nuevoTotal.toFixed(2);
@@ -337,7 +362,34 @@ function addToCart(nombre, precioUnitario, index) {
 
   saveCart();
   updateCartCount();
+
+  // Mensaje de notificación con formato
+  let mensajeCantidad = "";
+  if (cantidadTotal >= 48) {
+    const cajas = Math.floor(cantidadTotal / 48);
+    const sobrantes = cantidadTotal % 48;
+    mensajeCantidad = `📦 Has añadido <strong>${cajas} caja${cajas > 1 ? 's' : ''}</strong>` +
+      (sobrantes ? ` y <strong>${sobrantes} unidad${sobrantes > 1 ? 'es' : ''}</strong>` : '');
+  } else {
+    mensajeCantidad = `📦 Has añadido <strong>${cantidadTotal} unidad${cantidadTotal > 1 ? 'es' : ''}</strong>`;
+  }
+
+  if (descuento > 0) {
+  mensajeCantidad += `
+    <div class="mt-2 text-sm">
+      💸 <span class="inline-block bg-green-100 border border-green-400 text-green-800 font-bold px-2 py-1 rounded">
+        ¡Descuento ${descuento * 100}% aplicado!
+      </span><br>
+      <span class="inline-block mt-1 text-orange-600 font-bold">
+        Usted está ahorrando: S/ ${ahorro.toFixed(2)}
+      </span>
+    </div>`;
 }
+
+  mostrarNotificacion(mensajeCantidad, cantidadTotal);
+}
+
+
 
 function verProducto(index) {
   const p = productos[index];
@@ -378,38 +430,74 @@ function toggleCartModal() {
 function renderCart() {
   const container = document.getElementById("cartItems");
   const total = document.getElementById("cartTotal");
+  const totalWrapper = total.parentElement;
+
   container.innerHTML = "";
   let totalGeneral = 0;
+  let ahorroTotal = 0;
+
   carrito.forEach((item, i) => {
-    const subtotal = parseFloat(item.total);
-    totalGeneral += subtotal;
+    const cantidad = item.cantidad;
+
+    const descuentoAplicado = (cantidad >= 96) ? 0.10 :
+                               (cantidad >= 48) ? 0.05 :
+                               (cantidad >= 24) ? 0.02 : 0;
+
+    const precioConDescuento = parseFloat(item.total) / cantidad;
+    const precioOriginal = precioConDescuento / (1 - descuentoAplicado);
+    const subtotal = precioOriginal * cantidad;
+    const descuento = subtotal - (precioConDescuento * cantidad);
+    const totalConDescuento = subtotal - descuento;
+
+    totalGeneral += totalConDescuento;
+    ahorroTotal += descuento;
+
     container.innerHTML += `
-      <div class="border p-3 rounded shadow">
-        <div class="flex justify-between">
-          <div>
+      <div class="border p-3 rounded shadow text-sm">
+        <div class="flex justify-between items-start">
+          <div class="w-2/3">
             <p class="font-semibold">${item.nombre}</p>
             <select onchange="cambiarCantidad(${i}, this.value)" class="mt-1 border rounded px-2 py-1 text-sm">
-  <option value="12" ${item.cantidad === 12 ? 'selected' : ''}>12 unidades</option>
-  <option value="24" ${item.cantidad === 24 ? 'selected' : ''}>24 unidades</option>
-  <option value="48" ${item.cantidad === 48 ? 'selected' : ''}>1 caja (48 unidades)</option>
-  <option value="96" ${item.cantidad === 96 ? 'selected' : ''}>2 cajas (96 unidades)</option>
-  ${Array.from({length: 98}, (_, j) => {
-    const cajas = j + 3;
-    const unidades = cajas * 48;
-    return `<option value="${unidades}" ${item.cantidad === unidades ? 'selected' : ''}>${cajas} cajas (${unidades} unidades)</option>`;
-  }).join('')}
-</select>
+              <option value="12" ${cantidad === 12 ? 'selected' : ''}>12 unidades</option>
+              <option value="24" ${cantidad === 24 ? 'selected' : ''}>24 unidades</option>
+              <option value="48" ${cantidad === 48 ? 'selected' : ''}>1 caja (48 unidades)</option>
+              <option value="96" ${cantidad === 96 ? 'selected' : ''}>2 cajas (96 unidades)</option>
+              ${Array.from({length: 98}, (_, j) => {
+                const cajas = j + 3;
+                const unidades = cajas * 48;
+                return `<option value="${unidades}" ${cantidad === unidades ? 'selected' : ''}>${cajas} cajas (${unidades} unidades)</option>`;
+              }).join('')}
+            </select>
 
+            <div class="mt-2 text-gray-600">
+              <p>Subtotal: S/ ${subtotal.toFixed(2)}</p>
+              <p>Descuento: <span class="text-green-600">-S/ ${descuento.toFixed(2)} (${(descuentoAplicado * 100).toFixed(0)}%)</span></p>
+              <p class="font-semibold text-orange-600">Total: S/ ${totalConDescuento.toFixed(2)}</p>
+            </div>
           </div>
-          <div class="text-right">
-            <p class="text-sm">Total: S/ ${subtotal.toFixed(2)}</p>
+          <div class="w-1/3 text-right">
             <button onclick="eliminarDelCarrito(${i})" class="text-red-500 text-sm hover:underline">Eliminar</button>
           </div>
         </div>
       </div>`;
   });
+
   total.textContent = `S/ ${totalGeneral.toFixed(2)}`;
+
+  // 🔴 Eliminar notificación previa si existe
+  const anterior = totalWrapper.querySelector('.ahorro-notificacion');
+  if (anterior) anterior.remove();
+
+  // ✅ Crear nueva notificación
+  if (ahorroTotal > 0) {
+    const resumenExtra = document.createElement("div");
+    resumenExtra.className = "mt-2 text-center text-sm text-green-600 font-semibold ahorro-notificacion";
+    resumenExtra.textContent = `💸 Usted está ahorrando: S/ ${ahorroTotal.toFixed(2)}`;
+    totalWrapper.appendChild(resumenExtra);
+  }
 }
+
+
 
 function cambiarCantidad(index, nuevaCantidad) {
   const cantidad = parseInt(nuevaCantidad);
@@ -552,9 +640,96 @@ function mostrarNotificacionDescuento(index, descuento) {
   }, 10000);
 }
 
-</script>
+function mostrarNotificacionCarrito(mensaje) {
+  const notif = document.getElementById("cartNotif");
+  notif.textContent = mensaje;
+  notif.classList.remove("hidden");
+
+  // Reiniciar animación (por si ya está activa)
+  notif.classList.remove("animate-bounce");
+  void notif.offsetWidth; // Forzar reflow
+  notif.classList.add("animate-bounce");
+
+  setTimeout(() => {
+    notif.classList.add("hidden");
+  }, 3000);
+}
+
+function mostrarNotificacion(texto, cantidadTotal = 0) {
+  const noti = document.getElementById("notificacionCarrito");
+  const mensaje = document.getElementById("notiMensaje");
+  const barra = document.getElementById("notiBarra");
+  const emoji = document.getElementById("notiEmoji");
+
+  // Determina emoji
+  let icono = "🐟";
+  if (cantidadTotal >= 48) icono = "📦";
+  else if (cantidadTotal >= 24) icono = "🎁";
+
+  emoji.textContent = icono;
+  mensaje.innerHTML = texto; // ✅ Permite HTML con estilos
+
+  // Mostrar progreso si es menor a 48
+  if (cantidadTotal < 48) {
+    const porcentaje = Math.min((cantidadTotal / 48) * 100, 100);
+    barra.style.width = porcentaje + "%";
+    barra.parentElement.classList.remove("hidden");
+  } else {
+    barra.parentElement.classList.add("hidden");
+  }
+
+  // Animar
+  noti.classList.remove("hidden");
+  noti.classList.remove("animate-notif-enter");
+  void noti.offsetWidth;
+  noti.classList.add("animate-notif-enter");
+
+  clearTimeout(noti.dataset.timeoutId);
+  const timeoutId = setTimeout(() => {
+    noti.classList.add("hidden");
+  }, 4000);
+  noti.dataset.timeoutId = timeoutId;
+}
+
+
+
+
 
 </script>
+</script>
+
+
+<!-- Notificación de carrito (diálogo flotante) -->
+<div id="notificacionCarrito" class="fixed bottom-[72px] right-6 w-80 max-w-sm bg-white border border-green-400 shadow-lg rounded-lg p-4 flex items-start gap-3 hidden z-50 animate-notif-enter">
+  <div class="text-green-600 text-2xl">✅</div>
+  <div>
+    <p id="notiMensaje" class="text-sm text-gray-800"></p>
+    <p id="notiDescuento" class="text-sm text-pink-600 font-semibold animate-heartbeat hidden mt-1"></p>
+  </div>
+</div>
+
+<div id="notificacionCarrito" class="fixed bottom-20 right-4 bg-white border shadow-lg rounded-lg px-4 py-3 z-50 w-72 animate-notif-enter hidden">
+  <div class="flex items-center gap-2 mb-2">
+    <span id="notiEmoji" class="text-xl">🐟</span>
+    <p id="notiMensaje" class="text-sm text-gray-700 font-medium"></p>
+  </div>
+  <div class="h-2 w-full bg-gray-200 rounded hidden">
+    <div id="notiBarra" class="h-2 bg-orange-500 rounded transition-all duration-300" style="width: 0%"></div>
+  </div>
+</div>
+
+<style>
+@keyframes notif-enter {
+  0% { transform: translateY(50%); opacity: 0; }
+  60% { transform: translateY(-5%); }
+  80% { transform: translateY(2%); }
+  100% { transform: translateY(0); opacity: 1; }
+}
+.animate-notif-enter {
+  animation: notif-enter 0.5s ease-out;
+}
+</style>
+
 
 </body>
 </html>
